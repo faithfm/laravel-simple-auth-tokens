@@ -85,7 +85,7 @@ For **Laravel 11** onwards, modify  `bootstrap/app.php` [instead](docs/laravel-1
 
 
 
-### Basic Usage:
+### Usage:
 
 Assuming session and token guards have been configured as `'web'` and `'api`' respectively (ie: Laravel defaults), you can use [Laravel's normal authentication](https://laravel.com/docs/master/authentication) methods as follows:
 
@@ -99,10 +99,23 @@ $user = Auth::guard('api')->user();         // ditto (using Facades)
 Route::get(...)->middleware('auth:api')     // use token-based 'api' guard
 Route::get(...)->middleware('auth:web,api') // allow either session-based or token-based guards
 
-// Implicit guards can be used inside protected middleware (or other contexts where Auth::shouldUse($guard) was called)
-//    middleware('auth:...') -> shouldUse() --> setDefaultDriver() overwrites config('auth.defaults.guard')
-$loggedIn = auth()->check();
-$user = auth()->user();                     // ditto
+```
+
+When multiple alternative guards have been specified via middleware (ie: the last example above), all authentication calls inside this route are implicitly resolved using the first authenticated guard that was found:      *(The middleware calls the shouldUse() method which overrides the configured default guard.)*
+
+```php
+Route::get('/showuser', function () {
+    return auth()->user();	// web  OR api guard will automatically be used depending on first authenticated guard found during middleware check
+})->middleware('auth:web,api');
+```
+
+We also have created an extended `auth_guards()` helper that allows **multiple guards** to be specified, since unfortunately neither Laravel's `guard()` helper nor `Auth::guard()` facade support multiple guards outside of a middleware-protected-route - ie:
+
+```php
+$user = auth()->user();                 // default guard   = SUPPORTED
+$user = auth('api')->user();            // specific guard  = SUPPORTED
+$user = auth('web,api')->user();        // multiple guards = NOT SUPPORTED
+$user = auth_guards('web,api')->user(); // multiple guards = SUPPORTED (extended helper)
 ```
 
 
