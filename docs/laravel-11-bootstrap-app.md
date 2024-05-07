@@ -1,6 +1,12 @@
 # Laravel 11 web+api middleware:
 
-For **Laravel 11** onwards, modify  `bootstrap/app.php` instead, to replace the `StartSession` middleware for WEB routes and add the (optional) session-based middleware for API routes:   (NOT FULLY TESTED YET)
+
+
+> [!CAUTION]
+> (NOT FULLY TESTED YET)
+
+
+For **Laravel 11** onwards, modify  `bootstrap/app.php` instead, to replace the `StartSession` middleware for WEB routes and add the (optional) session-based middleware for API routes:
 
 ```diff
  ->withMiddleware(function (Middleware $middleware) {
