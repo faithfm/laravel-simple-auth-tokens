@@ -32,17 +32,18 @@ Modify `Models\User.php` to include the new `api_token` field:
     ];
 ```
 
-For **Laravel 8** onwards, add a token-based guard to `config/auth.php`.  *(This config was included by default in prior versions.)*
-
+For **Laravel 8** onwards, add a token-based guard to `config/auth.php` in the **Authentication Guards** section.  *(This config was included by default in prior versions.)*
+```diff
     'guards' => [
         ...
-        'api' => [
-            'driver' => 'token',
-            'provider' => 'users',
-            'input_key' => 'api_token',       // Default value - not strictly required
-            'storage_key' => 'api_token',     // Default value - not strictly required
-            'hash' => false,                  // Default value - not strictly required
-        ],
++         'api' => [
++           'driver' => 'token',
++           'provider' => 'users',
++           'input_key' => 'api_token',       // Default value - not strictly required
++           'storage_key' => 'api_token',     // Default value - not strictly required
++           'hash' => false,                  // Default value - not strictly required
++        ],
+```
 
 Modify `App\Http\Kernel.php` to replace the `StartSession` middleware for WEB routes:
 
@@ -81,9 +82,9 @@ protected $middlewareGroups = [
 ],
 ```
 
-For **Laravel 11** onwards, modify  `bootstrap/app.php` [instead](docs/laravel-11-bootstrap-app.md)...  [NOT FULLY TESTED]
-
-
+> [!CAUTION]
+>
+> For **Laravel 11** onwards, modify  `bootstrap/app.php` [instead](docs/laravel-11-bootstrap-app.md)...  [NOT FULLY TESTED]
 
 ### Usage:
 
@@ -140,4 +141,8 @@ Our `FaithFM\SimpleAuthTokens\Http\Middleware\StartSession` middleware works as 
 * Detect the presence of an `api_token=XXXX` request parameter.
 * Force Laravel session to use the memory-based `'array'` driver for the request  (instead persistent file/database/etc driver).
 
-> Note: a side-effect of our `StartSession` middleware this is that if you load a route from a browser that already has a valid / logged-in session, this session becomes invisible if you add an `api_token=XXXX` request parameter to the URL.  (ie: authentication can't fall-back to the session if the api_token has been specified)
+> 
+
+> [!NOTE]
+>
+> A side-effect of our `StartSession` middleware this is that if you load a route from a browser that already has a valid / logged-in session, this session becomes invisible if you add an `api_token=XXXX` request parameter to the URL.  (ie: authentication can't fall-back to the session if the api_token has been specified)
